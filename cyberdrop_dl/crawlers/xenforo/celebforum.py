@@ -16,6 +16,7 @@ class CelebForumCrawler(XenforoCrawler):
     DOMAIN: ClassVar[str] = "celebforum"
     FOLDER_DOMAIN: ClassVar[str] = "CelebForum"
     OLD_DOMAINS: ClassVar[tuple[str, ...]] = ("celebforum.to", "celeb.su")
+    THREAD_PART_NAMES: ClassVar[tuple[str, ...]] = (*XenforoCrawler.THREAD_PART_NAMES, "themen")
     IGNORE_EMBEDED_IMAGES_SRC: ClassVar[bool] = True  # images src is always a thumbnail
 
     @classmethod

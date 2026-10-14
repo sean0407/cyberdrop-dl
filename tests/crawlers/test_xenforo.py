@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -23,6 +24,27 @@ manager = Manager(appdata=AppData.from_dirs(AppDirs.from_path(Path(__file__).par
 
 scrape_item = _item("https://xenforo.com/community")
 TEST_CRAWLER = CelebForumCrawler
+
+
+@pytest.mark.asyncio
+async def test_celebforum_themen_path_is_routed_as_a_thread() -> None:
+    parsed_threads = []
+
+    async def thread(_scrape_item: ScrapeItem, parsed_thread: str) -> None:
+        parsed_threads.append(parsed_thread)
+
+    crawler = SimpleNamespace(
+        PRIMARY_URL=CelebForumCrawler.PRIMARY_URL,
+        THREAD_PART_NAMES=CelebForumCrawler.THREAD_PART_NAMES,
+        _check_thread_recursion=lambda _: None,
+        parse_thread=lambda _, thread_name: thread_name,
+        thread=thread,
+    )
+    item = _item("https://celebforum.cc/themen/hanna-secret.9318/")
+
+    await _forum.MessageBoardCrawler._fetch_thread(crawler, item)
+
+    assert parsed_threads == ["hanna-secret.9318"]
 
 
 def _html(string: str) -> str:
